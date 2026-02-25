@@ -17,7 +17,7 @@ jobs:
         with:
           version: "v5.1"
 
-      - name: Upgrade pip and setuptools
+      - name: Upgrade pip, setuptools, wheel
         run: |
           python3 -m ensurepip --upgrade
           python3 -m pip install --upgrade pip setuptools wheel
