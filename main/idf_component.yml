@@ -1,0 +1,4 @@
+# This tells ESP Component Manager which Zigbee libs to download
+dependencies:
+  - espressif/esp-zigbee-lib^1.6.8
+  - espressif/esp-zboss-lib^0.0.6
