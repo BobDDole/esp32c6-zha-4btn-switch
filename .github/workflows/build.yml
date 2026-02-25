@@ -27,7 +27,7 @@ jobs:
     # 4. Build firmware using ESP-Zigbee fork
     - name: Build firmware
       run: |
-        export IDF_PATH=$PWD/esp-zigbee
+        export IDF_PATH=$PWD/esp-zigbee-sdk
         python3 -m pip install -r $IDF_PATH/requirements.txt
         idf.py set-target esp32c6
         idf.py fullclean
