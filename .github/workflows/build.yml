@@ -2,56 +2,40 @@ name: Build ESP32-C6 Zigbee 4BTN Switch
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: espressif/idf:release-v5.3
+
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout project
+        uses: actions/checkout@v4
 
-    - name: Install prerequisites
-      run: |
-        sudo apt update
-        sudo apt install -y git wget python3 python3-pip python3-venv
+      - name: Set target
+        run: idf.py set-target esp32c6
 
-    - name: Clone ESP-IDF
-      run: |
-        git clone --depth 1 https://github.com/espressif/esp-idf.git -b v5.3.2 esp-idf
-        cd esp-idf
-        ./install.sh
+      - name: Build
+        run: idf.py build
 
-    - name: Export ESP-IDF environment
-      run: |
-        source $GITHUB_WORKSPACE/esp-idf/export.sh
+      - name: Upload bootloader
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootloader
+          path: build/bootloader/bootloader.bin
 
-    - name: Ensure Python packages
-      run: |
-        python3 -m pip install --upgrade pip setuptools wheel
+      - name: Upload partition table
+        uses: actions/upload-artifact@v4
+        with:
+          name: partition-table
+          path: build/partition_table/partition-table.bin
 
-    - name: Build firmware
-      run: |
-        source $GITHUB_WORKSPACE/esp-idf/export.sh
-        idf.py set-target esp32c6
-        idf.py fullclean
-        idf.py build
-
-    - name: Upload bootloader
-      uses: actions/upload-artifact@v4
-      with:
-        name: bootloader
-        path: build/bootloader/bootloader.bin
-
-    - name: Upload partition table
-      uses: actions/upload-artifact@v4
-      with:
-        name: partition-table
-        path: build/partition_table/partition-table.bin
-
-    - name: Upload main firmware
-      uses: actions/upload-artifact@v4
-      with:
-        name: zigbee_4btn_switch
-        path: build/zigbee_4btn_switch.bin
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: zigbee_4btn_switch
+          path: build/zigbee_4btn_switch.bin
