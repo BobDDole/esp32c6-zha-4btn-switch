@@ -1,4 +1,4 @@
-name: Build ESP32‑C6 Zigbee 4BTN Switch
+name: Build ESP32-C6 Zigbee 4BTN Switch
 
 on:
   push:
@@ -10,28 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
     - uses: actions/checkout@v4
-
-    - name: Clone ESP‑IDF repo
-      run: |
-        git clone --depth 1 https://github.com/espressif/esp-idf.git -b v5.3.2 esp-idf
 
     - name: Install prerequisites
       run: |
         sudo apt update
         sudo apt install -y git wget python3 python3-pip python3-venv
 
-    - name: Run ESP‑IDF install scripts
+    - name: Clone ESP-IDF
       run: |
+        git clone --depth 1 https://github.com/espressif/esp-idf.git -b v5.3.2 esp-idf
         cd esp-idf
         ./install.sh
 
-    - name: Export ESP‑IDF environment
+    - name: Export ESP-IDF environment
       run: |
         source $GITHUB_WORKSPACE/esp-idf/export.sh
 
-    - name: Ensure Python deps
+    - name: Ensure Python packages
       run: |
         python3 -m pip install --upgrade pip setuptools wheel
 
