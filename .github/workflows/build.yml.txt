@@ -1,0 +1,32 @@
+name: ESP32-C6 ZHA 4BTN Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup ESP-IDF
+      uses: espressif/esp-idf-action@v2
+      with:
+        version: v5.1
+
+    - name: Build Project
+      run: |
+        idf.py set-target esp32c6
+        idf.py build
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: zigbee_4btn_switch_bin
+        path: |
+          build/zigbee_4btn_switch.bin
+          build/bootloader/bootloader.bin
+          build/partition_table/partition-table.bin
