@@ -8,27 +8,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        esp_idf_repo: [ "https://github.com/espressif/esp-zigbee.git" ]
-        esp_idf_ref: [ "main" ]
 
     steps:
+    # 1. Checkout your project
     - name: Checkout project
       uses: actions/checkout@v4
 
-    - name: Checkout ESP‑Zigbee fork
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ matrix.esp_idf_repo }}
-        ref: ${{ matrix.esp_idf_ref }}
-        path: esp-zigbee
+    # 2. Clone ESP-Zigbee fork (required for esp_zigbee_core.h)
+    - name: Clone ESP-Zigbee fork
+      run: |
+        git clone --branch main https://github.com/espressif/esp-zigbee.git esp-zigbee
 
+    # 3. Upgrade pip, setuptools, wheel
     - name: Setup Python
       run: |
         python3 -m pip install --upgrade pip setuptools wheel
 
-    - name: Build with esp-zigbee
+    # 4. Build firmware using ESP-Zigbee fork
+    - name: Build firmware
       run: |
         export IDF_PATH=$PWD/esp-zigbee
         python3 -m pip install -r $IDF_PATH/requirements.txt
@@ -36,18 +33,21 @@ jobs:
         idf.py fullclean
         idf.py build
 
+    # 5. Upload bootloader
     - name: Upload bootloader
       uses: actions/upload-artifact@v4
       with:
         name: bootloader
         path: build/bootloader/bootloader.bin
 
+    # 6. Upload partition table
     - name: Upload partition table
       uses: actions/upload-artifact@v4
       with:
         name: partition-table
         path: build/partition_table/partition-table.bin
 
+    # 7. Upload main firmware
     - name: Upload main firmware
       uses: actions/upload-artifact@v4
       with:
