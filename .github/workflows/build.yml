@@ -8,50 +8,50 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout project
-      - uses: actions/checkout@v4
 
-      # Clone full ESP-IDF release v5.3.2
-      - name: Clone ESP-IDF
-        uses: actions/checkout@v4
-        with:
-          repository: espressif/esp-idf
-          ref: v5.3.2
-          path: esp-idf
+    - name: Checkout project
+      uses: actions/checkout@v4
 
-      # Install Python dependencies
-      - name: Install Python packages
-        run: |
-          python3 -m pip install --upgrade pip setuptools wheel
-          python3 -m pip install -r esp-idf/requirements.txt
+    - name: Install ESP‑IDF
+      run: |
+        sudo apt update
+        sudo apt install -y git wget python3 python3-pip python3-venv
+        wget https://dl.espressif.com/dl/esp-idf/releases/esp-idf-v5.3.2-linux-x86_64.tar.gz
+        tar -xzf esp-idf-v5.3.2-linux-x86_64.tar.gz
+        mv esp-idf v5.3.2
+        cd v5.3.2
+        ./install.sh
 
-      # Build firmware for ESP32-C6
-      - name: Build firmware
-        run: |
-          export IDF_PATH=$PWD/esp-idf
-          idf.py set-target esp32c6
-          idf.py fullclean
-          idf.py build
+    - name: Setup environment
+      run: |
+        source $GITHUB_WORKSPACE/v5.3.2/export.sh
 
-      # Upload bootloader.bin
-      - name: Upload bootloader
-        uses: actions/upload-artifact@v4
-        with:
-          name: bootloader
-          path: build/bootloader/bootloader.bin
+    - name: Ensure Python deps
+      run: |
+        python3 -m pip install --upgrade pip setuptools wheel
 
-      # Upload partition-table.bin
-      - name: Upload partition table
-        uses: actions/upload-artifact@v4
-        with:
-          name: partition-table
-          path: build/partition_table/partition-table.bin
+    - name: Build firmware
+      run: |
+        source $GITHUB_WORKSPACE/v5.3.2/export.sh
+        idf.py set-target esp32c6
+        idf.py fullclean
+        idf.py build
 
-      # Upload main firmware
-      - name: Upload main firmware
-        uses: actions/upload-artifact@v4
-        with:
-          name: zigbee_4btn_switch
-          path: build/zigbee_4btn_switch.bin
+    - name: Upload bootloader
+      uses: actions/upload-artifact@v4
+      with:
+        name: bootloader
+        path: build/bootloader/bootloader.bin
+
+    - name: Upload partition table
+      uses: actions/upload-artifact@v4
+      with:
+        name: partition-table
+        path: build/partition_table/partition-table.bin
+
+    - name: Upload main firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: zigbee_4btn_switch
+        path: build/zigbee_4btn_switch.bin
