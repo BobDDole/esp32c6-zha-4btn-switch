@@ -20,6 +20,7 @@ jobs:
         run: |
           source /opt/esp/idf/export.sh
           idf.py set-target esp32c6
+          idf.py reconfigure
           idf.py build
 
       - name: Upload bootloader
