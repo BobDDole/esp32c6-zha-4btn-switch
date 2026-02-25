@@ -13,20 +13,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install ESP‑IDF
-        uses: espressif/install-esp-idf-action@v1
+        uses: espressif/install-esp-idf-action@v2
         with:
           version: "v5.1"
 
-      # FIX: Ensure pip, setuptools, wheel are installed in ESP-IDF venv
-      - name: Install Python packages
+      - name: Upgrade pip and setuptools
         run: |
-          source $HOME/.espressif/python_env/idf5.1_py3.11_venv/bin/activate
-          python -m ensurepip --upgrade
-          python -m pip install --upgrade pip setuptools wheel
+          python3 -m ensurepip --upgrade
+          python3 -m pip install --upgrade pip setuptools wheel
 
       - name: Build firmware
         run: |
-          source $HOME/.espressif/python_env/idf5.1_py3.11_venv/bin/activate
           idf.py set-target esp32c6
           idf.py fullclean
           idf.py build
