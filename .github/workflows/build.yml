@@ -12,21 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install ESP‑IDF
-        uses: espressif/install-esp-idf-action@v2
+      - name: Build with ESP‑IDF CI Action
+        uses: espressif/esp-idf-ci-action@v1
         with:
-          version: "v5.1"
-
-      - name: Upgrade pip, setuptools, wheel
-        run: |
-          python3 -m ensurepip --upgrade
-          python3 -m pip install --upgrade pip setuptools wheel
-
-      - name: Build firmware
-        run: |
-          idf.py set-target esp32c6
-          idf.py fullclean
-          idf.py build
+          esp_idf_version: v5.3.3
+          target: esp32c6
+          path: .
 
       - name: Upload bootloader
         uses: actions/upload-artifact@v4
