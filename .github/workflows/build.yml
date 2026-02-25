@@ -8,24 +8,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
 
-    - name: Checkout project
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Install ESP‑IDF
+    - name: Clone ESP‑IDF repo
+      run: |
+        git clone --depth 1 https://github.com/espressif/esp-idf.git -b v5.3.2 esp-idf
+
+    - name: Install prerequisites
       run: |
         sudo apt update
         sudo apt install -y git wget python3 python3-pip python3-venv
-        wget https://dl.espressif.com/dl/esp-idf/releases/esp-idf-v5.3.2-linux-x86_64.tar.gz
-        tar -xzf esp-idf-v5.3.2-linux-x86_64.tar.gz
-        mv esp-idf v5.3.2
-        cd v5.3.2
+
+    - name: Run ESP‑IDF install scripts
+      run: |
+        cd esp-idf
         ./install.sh
 
-    - name: Setup environment
+    - name: Export ESP‑IDF environment
       run: |
-        source $GITHUB_WORKSPACE/v5.3.2/export.sh
+        source $GITHUB_WORKSPACE/esp-idf/export.sh
 
     - name: Ensure Python deps
       run: |
@@ -33,7 +37,7 @@ jobs:
 
     - name: Build firmware
       run: |
-        source $GITHUB_WORKSPACE/v5.3.2/export.sh
+        source $GITHUB_WORKSPACE/esp-idf/export.sh
         idf.py set-target esp32c6
         idf.py fullclean
         idf.py build
