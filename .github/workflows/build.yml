@@ -17,7 +17,7 @@ jobs:
     # 2. Clone ESP-Zigbee fork (required for esp_zigbee_core.h)
     - name: Clone ESP-Zigbee fork
       run: |
-        git clone --branch main https://github.com/espressif/esp-zigbee-sdk esp-zigbee
+        git clone --branch main https://github.com/espressif/esp-zigbee-sdk.git esp-zigbee-sdk
 
     # 3. Upgrade pip, setuptools, wheel
     - name: Setup Python
